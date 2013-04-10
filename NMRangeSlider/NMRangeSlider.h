@@ -61,6 +61,9 @@
 
 @property(retain, nonatomic) UIImage* trackBackgroundImage;
 
+@property(copy, nonatomic) NSString* lowerHandleAccessibilityLabel;
+@property(copy, nonatomic) NSString* upperHandleAccessibilityLabel;
+
 
 //Setting the lower/upper values with an animation :-)
 - (void)setLowerValue:(float)lowerValue animated:(BOOL) animated;

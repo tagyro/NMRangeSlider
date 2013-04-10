@@ -28,6 +28,9 @@
 #pragma mark -
 #pragma mark - Constructors
 
+@synthesize lowerHandleAccessibilityLabel;
+@synthesize upperHandleAccessibilityLabel;
+
 - (id)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
@@ -329,7 +332,7 @@
     float xValue = ((self.bounds.size.width-thumbRect.size.width)*((value - _minimumValue) / (_maximumValue - _minimumValue)));
     thumbRect.origin = CGPointMake(xValue, (self.bounds.size.height/2.0f) - (thumbRect.size.height/2.0f));
     
-    return CGRectIntegral(thumbRect);
+    return thumbRect;
 
 }
 
@@ -356,10 +359,20 @@
     self.lowerHandle = [[UIImageView alloc] initWithImage:self.lowerHandleImageNormal highlightedImage:self.lowerHandleImageHighlighted];
     self.lowerHandle.frame = [self thumbRectForValue:_lowerValue image:self.lowerHandleImageNormal];
     
+    if(self.lowerHandleAccessibilityLabel) {
+        [self.lowerHandle setIsAccessibilityElement:YES];
+        [self.lowerHandle setAccessibilityIdentifier:self.lowerHandleAccessibilityLabel];
+    }
+    
     //------------------------------
     // Upper Handle Handle
     self.upperHandle = [[UIImageView alloc] initWithImage:self.upperHandleImageNormal highlightedImage:self.upperHandleImageHighlighted];
     self.upperHandle.frame = [self thumbRectForValue:_upperValue image:self.upperHandleImageNormal];
+    
+    if(self.upperHandleAccessibilityLabel) {
+        [self.upperHandle setIsAccessibilityElement:YES];
+        [self.upperHandle setAccessibilityIdentifier:self.upperHandleAccessibilityLabel];
+    }
     
     [self addSubview:self.trackBackground];
     [self addSubview:self.track];
@@ -383,10 +396,6 @@
     self.upperHandle.frame = [self thumbRectForValue:_upperValue image:self.upperHandleImageNormal];
 }
 
-- (CGSize)intrinsicContentSize
-{
-   return CGSizeMake(UIViewNoIntrinsicMetric, MAX(self.lowerHandleImageNormal.size.height, self.upperHandleImageNormal.size.height));
-}
 
 // ------------------------------------------------------------------------------------------------------
 
@@ -397,11 +406,14 @@
 // TODO: Do it the correct way. I think wwdc 2012 had a video on it...
 - (CGRect) touchRectForHandle:(UIImageView*) handleImageView
 {
-    float xPadding = 5;
-    float yPadding = 5; //(self.bounds.size.height-touchRect.size.height)/2.0f
-
-    // expands rect by xPadding in both x-directions, and by yPadding in both y-directions
-    CGRect touchRect = CGRectInset(handleImageView.frame, -xPadding, -yPadding);;
+    float xPadding = 10;
+    float yPadding = 10; //(self.bounds.size.height-touchRect.size.height)/2.0f
+    
+    CGRect touchRect = handleImageView.frame;
+    touchRect.origin.x -= xPadding/2.0;
+    touchRect.origin.y -= yPadding/2.0;
+    touchRect.size.height += xPadding;
+    touchRect.size.width += yPadding;
     return touchRect;
 }
 
